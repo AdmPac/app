@@ -7,11 +7,13 @@
         
         <main>
             <div style="display:flex; flex-direction:row; flex-wrap:wrap;">
-                <div style="display: flex; flex-direction:column; height: 300px; width: 300px; border: 1px solid black; margin: 10px">
-                    <img src="" alt="picture" style="width:100%; height: 20vh; border: 1px solid red">
-                    <span id="name" style="padding:0px">Название:</span>
-                    <span id="description" style="padding:0px">Описание:</span>
-                </div>
+                <x-card.product.preview 
+                    :name="'test'"
+                    :description="'test'"
+                    :cost=1000.00
+                    :category="'test'"
+                    :picture="'test'"
+                />
             </div>
         </main>
         
