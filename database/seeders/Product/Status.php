@@ -1,0 +1,24 @@
+<?php
+
+namespace Database\Seeders\Product;
+
+use App\Models\Product\Status as ProductStatus;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+
+class Status extends Seeder
+{
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        ProductStatus::truncate();
+        ProductStatus::insert([
+            ['name' => 'Активен'],
+            ['name' => 'Не активен'],
+        ]);
+    }
+}
