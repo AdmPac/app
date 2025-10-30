@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\MarketController;
+use App\Http\Controllers\ProductController;
 
-Route::get('/', [MarketController::class, 'index']);
+Route::get('/', [ProductController::class, 'index']);
 
