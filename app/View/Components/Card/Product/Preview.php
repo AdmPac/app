@@ -16,7 +16,7 @@ class Preview extends Component
         public string $description,
         public string $picture,
         public string $cost,
-        public string $category,
+        public string $limit,
     )
     {
         //
