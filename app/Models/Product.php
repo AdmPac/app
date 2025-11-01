@@ -3,13 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\Product\Status;
 use App\Models\Product\Type;
 use App\Models\OrderItems;
 
 class Product extends Model
 {
+    use HasFactory;
+    
     public function type()
     {
         return $this->belongsTo(Type::class);
