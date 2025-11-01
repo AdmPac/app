@@ -21,4 +21,15 @@ class Order extends Model
     {
         return $this->belongsTo(Address::class);
     }
+    
+    public function productItems()
+    {
+        return $this->hasMany(OrderItems::class)->withPivot(
+            'quantity', 
+            'cost', 
+            'name', 
+            'img', 
+            'description'
+        );
+    }
 }
