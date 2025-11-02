@@ -1,12 +1,9 @@
 <div>
-    <nav>
-        <ul>
-            <li><a href="/">Главная</a></li>
-            <li><a href="orders">Корзина</a></li>
-        </ul>
-        <main>
-            <div style="display:flex; flex-direction:row; flex-wrap:wrap;">
-                @foreach ($products as $product)
+    <x-base.navigation/>
+    <main>
+        <div style="display:flex; flex-direction:row; flex-wrap:wrap;">
+            @foreach ($products as $product)
+                @if ($product->status->id == 1)
                     <x-card.product.preview 
                         :name="$product->name"
                         :description="$product->description"
@@ -14,10 +11,10 @@
                         :cost="$product->cost"
                         :limit="$product->limit"
                     />
-                @endforeach
-            </div>
-        </main>
-        
+                @endif
+            @endforeach
         </div>
-    </nav>
+    </main>
+    
+    </div>
 </div>
