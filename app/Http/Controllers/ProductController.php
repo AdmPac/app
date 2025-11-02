@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\Product\Type;
+use App\Models\Product\Status;
 
 /**
  * Отвечает за продукты
@@ -48,7 +50,10 @@ class ProductController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $product = Product::where('id', $id)->first();
+        $types = Type::all();
+        $statuses = Status::all();
+        return view('product.edit', compact('product', 'types', 'statuses'));
     }
 
     /**
