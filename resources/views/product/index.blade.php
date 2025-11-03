@@ -7,7 +7,7 @@
                     <x-card.product.preview 
                         :name="$product->name"
                         :description="$product->description"
-                        :picture="$product->img"
+                        :img="$product->img"
                         :cost="$product->cost"
                         :limit="$product->limit"
                     />

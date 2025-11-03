@@ -12,16 +12,24 @@
                 <th>{{$col}}</th>
                 @endforeach
             </tr>
-            @foreach($products->toArray() as $k => $product)
+            @foreach($products->toArray() as $product)
             <tr>
                 @foreach(array_values($product) as $value)
                     <td>{{$value}}</td>
                 @endforeach
-                <td><a href="{{route('product.page.edit', ($k+1))}}">Изменить</a></td>
+                <td><a href="{{route('product.page.edit', $product['id'])}}">Изменить</a></td>
+                <td>
+                <form method="POST" action="{{route('product.delete', $product['id'])}}">
+                    @csrf
+                    @method('DELETE')
+                    <input type="submit" value="Удалить">
+                </form>
+                </td>
             </tr>
             @endforeach
+            
         </table>
-        <input type="button" value="Добавить">
+        <h2><a href="{{route('product.create')}}">Добавить</a></h2>
     </main>
     </nav>
 </div>
