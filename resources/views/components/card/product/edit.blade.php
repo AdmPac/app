@@ -15,7 +15,7 @@
         Статус:
         <select name="status_id" id="">
             @foreach ($statuses as $item)
-                <option value="{{$item->id}}" @selected($item->id == $product->type->id)>{{$item->name}}</option>
+                <option value="{{$item->id}}" @selected($item->id == $product->status->id)>{{$item->name}}</option>
             @endforeach
         </select>
         Лимит: <input name="limit" type="text" value="{{$product->limit}}" style="padding:0px">
