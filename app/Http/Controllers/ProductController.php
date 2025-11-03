@@ -26,7 +26,9 @@ class ProductController extends Controller
      */
     public function create()
     {
-        //
+        $types = Type::all();
+        $statuses = Status::all();
+        return view('product.create', compact('types', 'statuses'));
     }
 
     /**
@@ -34,7 +36,17 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'img' => 'required|string',
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'cost' => 'required|numeric',
+            'type_id' => 'required|integer',
+            'status_id' => 'required|integer',
+            'limit' => 'required|integer',
+        ]);
+        Product::create($request->all());
+        return redirect()->route('product.create')->with('success', 'Продукт создан!');
     }
 
     /**
@@ -62,6 +74,7 @@ class ProductController extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
+            'img' => 'required|string',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'cost' => 'required|numeric',
@@ -79,6 +92,8 @@ class ProductController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $product = Product::findOrFail($id);
+        $product->delete($id);
+        return redirect()->route('admin.index')->with('success', 'Продукт удален!');
     }
 }

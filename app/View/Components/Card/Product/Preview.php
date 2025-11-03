@@ -14,7 +14,7 @@ class Preview extends Component
     public function __construct(
         public string $name,
         public string $description,
-        public string $picture,
+        public string $img,
         public string $cost,
         public string $limit,
     )
