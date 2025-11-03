@@ -61,7 +61,17 @@ class ProductController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'cost' => 'required|numeric',
+            'type_id' => 'required|integer',
+            'status_id' => 'required|integer',
+            'limit' => 'required|integer',
+        ]);
+        $product = Product::findOrFail($id);
+        $product->update($request->all());
+        return redirect()->route('product.page.edit')->with('success', 'Продукт обновлен!');
     }
 
     /**
