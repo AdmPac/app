@@ -11,7 +11,7 @@ class AuthorizeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function authorize()
+    public function login()
     {
         if (Auth::user()) return redirect()->route('product.index');
         return view('authorize');
