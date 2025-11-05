@@ -14,7 +14,7 @@ class Status extends Seeder
      */
     public function run(): void
     {
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;'); // игнорируем проверку внешних ключей
         ProductStatus::truncate();
         ProductStatus::insert([
             ['name' => 'Активен'],
