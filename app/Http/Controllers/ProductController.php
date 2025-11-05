@@ -54,7 +54,8 @@ class ProductController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $products = Product::where('id', $id)->with('status', 'type')->get();
+        return view('product.index', compact('products'));
     }
 
     /**
