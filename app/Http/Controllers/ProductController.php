@@ -54,7 +54,10 @@ class ProductController extends Controller
      */
     public function show(string $id)
     {
-        $products = Product::where('id', $id)->where('status_id', 1)->with('status', 'type')->get();
+        $products = Product::where('id', $id)->where('status_id', 1)->with('status', 'type')->firstOrFail();
+        if ($products->isEmpty()) {
+            abort(404);
+        }
         return view('product.index', compact('products'));
     }
 
