@@ -4,13 +4,18 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthorizeController;
+use App\Http\Controllers\OrderController;
 
 Route::get('/', [ProductController::class, 'index'])->name('product.index');
 
 
 Route::get('/login', [AuthorizeController::class, 'login'])->name('login');
 Route::post('/login', [AuthorizeController::class, 'check'])->name('authorize.check');
+
 Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show')->whereNumber('id');
+
+Route::get('/order', [OrderController::class, 'index'])->name('product.show');
+Route::post('/order', [OrderController::class, 'index'])->name('product.show');
 
 Route::middleware(['auth'])->group(function() {
     Route::post('/authorize/logout/', [AuthorizeController::class, 'logout'])->name('authorize.logout');
