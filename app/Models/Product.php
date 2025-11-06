@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\Product\Status;
 use App\Models\Product\Type;
-use App\Models\OrderItems;
 
 class Product extends Model
 {
@@ -27,9 +26,9 @@ class Product extends Model
         return $this->belongsTo(Type::class);
     }
 
-    public function productItems()
+    public function order()
     {
-        return $this->hasMany(OrderItems::class);
+        return $this->belongsToMany(Order::class, 'order_items', 'product_id', 'order_id');
     }
 
     public function status()

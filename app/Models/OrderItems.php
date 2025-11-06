@@ -9,12 +9,12 @@ class OrderItems extends Model
 {
     use HasFactory;
     
-    protected function product()
+    public function product()
     {
-        return $this->belongsToMany(Product::class);
+        return $this->belongsTo(Product::class);
     }
-    protected function order()
+    public function order()
     {
-        return $this->belongsToMany(Order::class);
+        return $this->belongsTo(Order::class);
     }
 }
