@@ -12,11 +12,12 @@ class Preview extends Component
      * Create a new component instance.
      */
     public function __construct(
-        public string $name,
-        public string $description,
-        public string $img,
-        public string $cost,
-        public string $limit,
+        public $id,
+        public $name,
+        public $description,
+        public $img,
+        public $cost,
+        public $limit,
     )
     {
         //
