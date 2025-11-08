@@ -54,7 +54,10 @@ class DatabaseSeeder extends Seeder
         OrderStatus::truncate();
         OrderStatus::insert($orderStatus);
         
+        Order::truncate();
         Order::factory(10)->create();
+
+        OrderItems::truncate();
         OrderItems::factory(15)->create();
     }
 }
