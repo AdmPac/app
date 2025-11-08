@@ -22,6 +22,7 @@ class OrderFactory extends Factory
     public function definition(): array
     {
         $statusOrder = Status::pluck('id')->toArray();
+
         $phones = Phone::pluck('id')->toArray();
         $users = User::pluck('id')->toArray();
         $addresses = Address::pluck('id')->toArray();
@@ -30,7 +31,7 @@ class OrderFactory extends Factory
             'user_id' => fake()->randomElement($users),
             'phone_id' => fake()->randomElement($phones),
             'address_id' => fake()->randomElement($addresses),
-            'status_id' => fake()->randomElement($statusOrder),
+            'status_id' => fake()->numberBetween(2, count($statusOrder)),
         ];
     }
 }

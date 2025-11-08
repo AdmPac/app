@@ -16,7 +16,7 @@ Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.s
 
 Route::get('/orders', [OrderController::class, 'index'])->name('order.index');
 Route::post('/orders/{id}', [OrderController::class, 'update'])->name('order.update');
-Route::delete('/orders/{id}', [OrderController::class, 'delete'])->name('order.delete');
+Route::delete('/orders/{orderId}/{id}', [OrderController::class, 'delete'])->name('order.delete');
 
 Route::middleware(['auth'])->group(function() {
     Route::post('/authorize/logout/', [AuthorizeController::class, 'logout'])->name('authorize.logout');

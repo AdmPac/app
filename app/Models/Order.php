@@ -9,6 +9,13 @@ use Illuminate\Database\Eloquent\Model;
 class Order extends Model
 {
     use HasFactory;
+    public $table = 'orders';
+    public $fillable = [
+        'user_id',
+        'address_id',
+        'phone_id',
+        'status_id',
+    ];
 
     public function status()
     {
@@ -24,7 +31,7 @@ class Order extends Model
     {
         return $this->belongsTo(Address::class);
     }
-    
+
     public function product()
     {
         return $this->belongsToMany(
@@ -33,7 +40,8 @@ class Order extends Model
             'order_id',
             'product_id'
         )->withPivot(
-            'quantity', 
+            'id',
+            'quantity',
             'cost', 
             'name', 
             'img', 
