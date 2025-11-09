@@ -14,10 +14,9 @@ Route::post('/login', [AuthorizeController::class, 'check'])->name('authorize.ch
 
 Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show')->whereNumber('id');
 
-Route::get('/orders', [OrderController::class, 'index'])->name('order.index');
-
-Route::post('/orders/{id}', [OrderController::class, 'update'])->name('order.update');
-Route::delete('/orders/{orderId}/{id}', [OrderController::class, 'delete'])->name('order.delete');
+Route::get('/cart', [OrderController::class, 'index'])->name('order.index');
+Route::post('/cart/{id}', [OrderController::class, 'update'])->name('order.update');
+Route::delete('/cart/{orderId}/{id}', [OrderController::class, 'delete'])->name('order.delete');
 
 Route::middleware(['auth'])->group(function() {
     Route::post('/authorize/logout/', [AuthorizeController::class, 'logout'])->name('authorize.logout');
@@ -32,6 +31,7 @@ Route::middleware(['auth', 'can:access-admin'])->group(function() {
 });
 
 Route::middleware('auth')->group(function() {
+    Route::get('/orders/all', [OrderController::class, 'all'])->name('order.all');
     Route::get('/orders/{id}', [OrderController::class, 'form'])->name('order.form');
     Route::post('/orders/{id}/delivery', [OrderController::class, 'delivery'])->name('order.delivery');
 });

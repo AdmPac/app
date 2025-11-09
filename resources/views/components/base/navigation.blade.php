@@ -1,7 +1,8 @@
 <nav>
     <ul>
         <li><a href="{{route('product.index')}}"><b>Главная</b></a></li>
-        <li><a href="{{url('orders')}}">Корзина</a></li>
+        <li><a href="{{route('order.index')}}">Корзина</a></li>
+        <li><a href="{{route('order.all')}}">Доставки</a></li>
         @if(auth()->check() && Auth::user()->is_admin)
             <li><a href="{{route('admin.index')}}">Админка</a></li>
         @endif

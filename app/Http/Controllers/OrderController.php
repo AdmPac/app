@@ -39,6 +39,32 @@ class OrderController extends Controller
         ]);
         return back();
     }
+
+    public function all()
+    {
+        $orders = Order::where('user_id', Auth::id())->get();
+        $orderData = [];
+        foreach ($orders as &$order) {
+            $phone = $order->phone ? $order->phone->value : '';
+            $address = $order->address ? $order->address->value : '';
+            $orderData[$order->id] = [
+                'id' => $order->id,
+                'status' => $order->status->value,
+                'phone' => $phone,
+                'address' => $address,
+            ];
+
+            $products = $order->product()->get();
+            foreach ($products as $product) {
+                $orderData[$order->id]['name'] = $product->pivot->name;
+                $orderData[$order->id]['quantity'] = $product->pivot->quantity;
+                $orderData[$order->id]['cost'] = $product->pivot->cost;
+                $orderData[$order->id]['cost_all'] = $product->pivot->cost;
+            }
+        }
+        $keys = array_keys($orderData[array_key_first($orderData)]);
+        return view('order.all', compact('orderData', 'keys'));
+    }
    
     public function form($id)   
     {
