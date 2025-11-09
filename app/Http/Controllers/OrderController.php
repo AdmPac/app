@@ -2,44 +2,106 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Address;
 use App\Models\Order;
 use App\Models\OrderItems;
+use App\Models\Phone;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Product;
 
 class OrderController extends Controller
 {
+    public function delivery(Request $request, $id)
+    {
+        // TODO: заменить на Request class
+        $request->validate([
+            'phone' => 'required|regex:/^\+?[0-9-]{9,}$/',
+            'address' => 'required|min:1',
+        ]);
+        
+        $address = Address::firstOrCreate([
+            'value' => $request->address,
+        ]);
+        $phone = Phone::firstOrCreate([
+            'value' => $request->phone,
+        ]);
+        
+        // TODO: Заменить на политику
+        $uid = Auth::user()->id;
+        $orderUser = Order::findOrFail($id);
+        if ($uid != $orderUser->user_id || $orderUser->status_id != 1) return redirect('orders');
+        
+        $orderUser->update([
+            'status_id' => 2,
+            'address_id' => $address->id,
+            'phone_id' => $phone->id,
+        ]);
+        return back();
+    }
+   
+    public function form($id)   
+    {
+        $uid = Auth::user()->id;
+        $orderUser = Order::findOrFail($id);
+        if ($uid != $orderUser->user_id) return redirect('orders');
+        $address = $orderUser->address()->first() ? $orderUser->address()->first()->value : '';
+        $phone = $orderUser->phone()->first() ? $orderUser->phone()->first()->value : '';
+        $productData = $orderUser->product->toArray();
+        
+        $orderId = $orderUser->id;
+        $allSum = 0;
+        $allCnt = 0;
+
+        $statusModel = $orderUser->status;
+        $statusName = $statusModel->value;
+        $isCart = $orderUser->status->id === 1;
+
+        foreach ($productData as $data) {
+            $quantity = $data['pivot']['quantity'];
+            $cost = $isCart ? $data['cost'] : $data['pivot']['cost'];
+            $allSum += $quantity * $cost;
+            $allCnt += $quantity;
+        }
+
+        return view('order.delivery', compact('address', 'phone', 'allSum', 'allCnt', 'orderId', 'isCart', 'statusName'));
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
+        $orderId = null;
+        $productsData = [];
         if (Auth::check()) {
-            $products = Order::with('product', 'status')
+            $productsModel = Order::with('product', 'status')
                 ->where('user_id', Auth::user()->id)
                 ->where('status_id', 1) // статус=1 - текущая корзина
                 ->first();
-            
-            $products = $products ? $products->toArray()['product'] : [];
-            foreach ($products as $k => $product) {
-                $products[$k]['quantity'] = $product['pivot']['quantity'];
-                $products[$k]['order_id'] = $product['pivot']['order_id'];
+            if ($productsModel) {
+                $orderId = $productsModel->id;
+    
+                $productsData = $productsModel ? $productsModel->toArray()['product'] : [];
+                foreach ($productsData as $k => $product) {
+                    $productsData[$k]['quantity'] = $product['pivot']['quantity'];
+                    $productsData[$k]['order_id'] = $product['pivot']['order_id'];
+                }
             }
         } else {
             $quantity = session('order') ?? [];
-            $products = Product::whereIn('id', array_keys($quantity))->get();
-            $products = $products->map(function($product) use ($quantity) {
+            $productsData = Product::whereIn('id', array_keys($quantity))->get();
+            $productsData = $productsData->map(function($product) use ($quantity) {
                 $product->quantity = $quantity[$product->id] ?? 0;
                 return $product;
             });
-            $products = $products->toArray();
+            $productsData = $productsData->toArray();
         }
         $allSum = 0;
-        foreach ($products as $product) {
+        foreach ($productsData as $product) {
             $allSum += $product['quantity'] * $product['cost'];
         }
-        return view('order.index', compact('products', 'allSum'));
+        return view('order.index', compact('productsData', 'allSum', 'orderId'));
     }
 
     public function delete($orderId, $id)

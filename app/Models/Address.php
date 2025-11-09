@@ -9,6 +9,8 @@ class Address extends Model
 {
     use HasFactory;
     
+    protected $fillable = ['value'];
+
     public $timestamps = false;
 
     public function order()

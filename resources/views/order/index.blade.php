@@ -1,14 +1,9 @@
-<style>
-    table, th, td {
-      border:1px solid black;
-    }
-</style>
 <x-base.navigation/>
 <div style="display:flex; flex-direction:row; flex-wrap:wrap;">
-    @if (!count($products)) 
+    @if (!count($productsData)) 
     <h1>Корзина пуста <a href="{{route('product.index')}}">Заказать</a></h1>
     @endif
-    @foreach($products as $product)
+    @foreach($productsData as $product)
     <div style="display: flex; flex-direction:column; height: 300px; width: 300px; margin: 10px">
         <img src="{{$product['img']}}" alt="{{$product['name']}}" style="width:100%; height: 10vw;">
         <span>Название: {{$product['name']}}</span>
@@ -25,6 +20,10 @@
     @endforeach
 </div>
 <br><br><br><br><br><br><br><br>
-@if (count($products)) 
+@if (count($productsData))
 Общая стоимость корзины: {{$allSum}}
+<form action="{{route('order.form', $orderId)}}">
+    @csrf
+    <input type="submit" value="Заказать">
+</form>
 @endif
