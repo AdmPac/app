@@ -6,8 +6,8 @@
 <x-base.navigation/>
 <table>
     <tr>
-        @foreach ($keys as $colName)
-            <th>{{ __('order.' . $colName) }}</th>
+        @foreach (__('order') as $colName)
+            <th>{{ $colName}}</th>
         @endforeach
     </tr>
     
