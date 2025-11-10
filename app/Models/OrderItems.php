@@ -3,15 +3,28 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class OrderItems extends Model
 {
-    protected function product()
+    use HasFactory;
+    
+    protected $fillable = [
+        'name',
+        'description',
+        'img',
+        'quantity',
+        'cost',
+        'product_id',
+        'order_id',
+    ];
+
+    public function product()
     {
-        return $this->belongsToMany(Product::class);
+        return $this->belongsTo(Product::class);
     }
-    protected function order()
+    public function order()
     {
-        return $this->belongsToMany(Order::class);
+        return $this->belongsTo(Order::class);
     }
 }

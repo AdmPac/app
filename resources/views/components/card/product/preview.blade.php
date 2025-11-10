@@ -3,5 +3,9 @@
     <span style="padding:0px">Название: {{$name}}</span>
     <span style="padding:0px">Описание:{{$description}}</span>
     <span style="padding:0px">Цена:{{$cost}}</span>
-    <span style="padding:0px">Лимит:{{$limit}}</span>
+    <form action="{{route('order.update', $id)}}" method="POST">
+        @csrf
+        <input type="text" required name="quantity" placeholder="Кол-во до {{$limit}}">
+        <input type="submit" value="Добавить в корзину">
+    </form>
 </div>
