@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Address;
 use Illuminate\Http\Request;
 
 use App\Models\Order;
 use App\Models\OrderItems;
+use App\Models\Phone;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Product;
 use Illuminate\Support\Facades\Session;
@@ -142,5 +144,39 @@ class CartController extends Controller
             Session::put('order', $order);
         }
         return response()->json($order);
+    }
+    
+    
+    public function delivery(Request $request)
+    {
+        // TODO: заменить на Request class
+        $request->validate([
+            'phone' => 'required|regex:/^\+?[0-9-]{9,}$/',
+            'address' => 'required|min:1',
+        ]);
+        
+        $address = Address::firstOrCreate([
+            'value' => $request->address,
+        ]);
+        $phone = Phone::firstOrCreate([
+            'value' => $request->phone,
+        ]);
+        
+        // TODO: Заменить на политику
+        $uid = Auth::id();
+        $orderUser = Order::where('user_id', $uid)->where('status_id', 1)->firstOrFail();
+        
+        $updated = $orderUser->update([
+            'status_id' => 2,
+            'address_id' => $address->id,
+            'phone_id' => $phone->id,
+        ]);
+        
+        if ($updated) {
+            return response()->json($orderUser);
+        }
+        return response()->json([
+            'message' => 'bad updated'
+        ]);
     }
 }
