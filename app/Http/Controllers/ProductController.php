@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
-use App\Models\Product\Type;
-use App\Models\Product\Status;
 
 /**
  * Отвечает за продукты
@@ -15,26 +13,17 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function getAll()
     {
-        $products = Product::with('status')->get();
-        return view('product.index', compact('products'));
+        $products = Product::where('status_id', 1)->with('status')->get();
+        return response()->json($products);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        $types = Type::all();
-        $statuses = Status::all();
-        return view('product.create', compact('types', 'statuses'));
-    }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function post(Request $request)
     {
         $request->validate([
             'img' => 'required|string',
@@ -45,59 +34,88 @@ class ProductController extends Controller
             'status_id' => 'required|integer',
             'limit' => 'required|integer',
         ]);
-        Product::create($request->all());
-        return redirect()->route('product.create')->with('success', 'Продукт создан!');
+
+        $product = Product::create($request->all());
+        if ($product) {
+            return response()->json($product);
+        }
+        return response()->json([
+            'message' => 'bad create'
+        ], 500);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function get(string $id)
     {
-        $products = Product::where('id', $id)->where('status_id', 1)->with('status', 'type')->firstOrFail();
-        if ($products->isEmpty()) {
-            abort(404);
-        }
-        return view('product.index', compact('products'));
+        $products = Product::where('id', $id)->where('status_id', 1)->firstOrFail();
+        return response()->json($products);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function patch(Request $request, string $id)
     {
-        $product = Product::where('id', $id)->first();
-        $types = Type::all();
-        $statuses = Status::all();
-        return view('product.edit', compact('product', 'types', 'statuses'));
+        $request->validate([
+            'img' => 'sometimes|string',
+            'name' => 'sometimes|nullable|string|max:255',
+            'description' => 'sometimes|nullable|nullable|string',
+            'cost' => 'sometimes|nullable|numeric',
+            'type_id' => 'sometimes|nullable|integer',
+            'status_id' => 'sometimes|nullable|integer',
+            'limit' => 'sometimes|nullable|integer',
+        ]);
+
+        $product = Product::findOrFail($id);
+        $update = $product->update($request->all());
+        if ($product && $update) {
+            return response()->json($product);
+        }
+        return response()->json([
+            'message' => 'bad update'
+        ], 500);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function put(Request $request, string $id)
     {
         $request->validate([
             'img' => 'required|string',
             'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'description' => 'required|nullable|string',
             'cost' => 'required|numeric',
             'type_id' => 'required|integer',
             'status_id' => 'required|integer',
             'limit' => 'required|integer',
         ]);
         $product = Product::findOrFail($id);
-        $product->update($request->all());
-        return redirect()->route('product.page.edit', $id)->with('success', 'Продукт обновлен!');
+        $update = $product->update($request->all());
+        if ($product && $update) {
+            return response()->json($product);
+        }
+        return response()->json([
+            'message' => 'bad update'
+        ], 500);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function delete(string $id)
     {
         $product = Product::findOrFail($id);
-        $product->delete($id);
-        return redirect()->route('admin.index')->with('success', 'Продукт удален!');
+        $isDeleted = $product->delete($id);
+        if ($isDeleted) {
+            return response()->json([
+                'message' => 'delete success',
+            ]);
+        }
+        return response()->json([
+            'message' => 'bad deleted',
+        ], 500);
     }
 }
