@@ -8,7 +8,9 @@ use App\Models\Order;
 
 class Status extends Model
 {
-    protected $table = "statuses_orders";
+    protected $table = "status_orders";
+
+    public $timestamps = false;
 
     public function order()
     {

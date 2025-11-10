@@ -13,12 +13,12 @@ return new class extends Migration
     {   
         Schema::create('phones', function (Blueprint $table) {
             $table->id();
-            $table->string('value');
+            $table->string('value')->default('');
         });
         
         Schema::create('addresses', function (Blueprint $table) {
             $table->id();
-            $table->string('value');
+            $table->string('value')->default('');
         });
         
         Schema::create('status_orders', function (Blueprint $table) {
@@ -29,10 +29,10 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('address_id')->constrained('phones');
-            $table->foreignId('phone_id')->constrained('addresses');
+            $table->foreignId('address_id')->nullable()->constrained('addresses')->default(null)->onDelete('set null');
+            $table->foreignId('phone_id')->nullable()->constrained('phones')->default(null)->onDelete('set null');
             $table->foreignId('status_id')->constrained('status_orders');
-            $table->float('total_cost');
+            $table->float('total_cost')->default(0);
             $table->timestamps();
         });
     }
@@ -42,6 +42,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::disableForeignKeyConstraints();
+
         Schema::dropIfExists('orders');
         Schema::dropIfExists('phones');
         Schema::dropIfExists('addresses');

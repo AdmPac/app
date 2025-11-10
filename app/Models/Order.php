@@ -3,10 +3,20 @@
 namespace App\Models;
 
 use App\Models\Order\Status;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
+    use HasFactory;
+    public $table = 'orders';
+    public $fillable = [
+        'user_id',
+        'address_id',
+        'phone_id',
+        'status_id',
+    ];
+
     public function status()
     {
         return $this->belongsTo(Status::class);
@@ -21,11 +31,17 @@ class Order extends Model
     {
         return $this->belongsTo(Address::class);
     }
-    
-    public function productItems()
+
+    public function product()
     {
-        return $this->hasMany(OrderItems::class)->withPivot(
-            'quantity', 
+        return $this->belongsToMany(
+            Product::class,
+            'order_items',
+            'order_id',
+            'product_id'
+        )->withPivot(
+            'id',
+            'quantity',
             'cost', 
             'name', 
             'img', 
