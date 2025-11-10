@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Address;
 use App\Models\Order;
+use App\Models\Order\Status;
 use App\Models\OrderItems;
 use App\Models\Phone;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Product;
+use Illuminate\Support\Facades\Gate;
 
 class OrderController extends Controller
 {
@@ -42,8 +44,10 @@ class OrderController extends Controller
 
     public function all()
     {
-        $orders = Order::where('user_id', Auth::id())->get();
+        $isAdmin = Gate::allows('access-admin');
+        $orders = $isAdmin ? Order::all() : Order::where('user_id', Auth::id())->get();
         $orderData = [];
+        $allStatus = $isAdmin ? Status::all()->toArray() : null;
         foreach ($orders as &$order) {
             $phone = $order->phone ? $order->phone->value : '';
             $address = $order->address ? $order->address->value : '';
@@ -53,7 +57,6 @@ class OrderController extends Controller
                 'phone' => $phone,
                 'address' => $address,
             ];
-
             $products = $order->product()->get();
             foreach ($products as $product) {
                 $orderData[$order->id]['name'] = $product->pivot->name;
@@ -62,35 +65,51 @@ class OrderController extends Controller
                 $orderData[$order->id]['cost_all'] = $product->pivot->cost;
             }
         }
-        $keys = array_keys($orderData[array_key_first($orderData)]);
-        return view('order.all', compact('orderData', 'keys'));
+        return view('order.all', compact('orderData')); // isAdmin - чтобы allStatus не был единственным параметром для получения доп.доступов
     }
-   
+
+    public function edit(Request $request, $id)
+    {
+        $order = Order::findOrFail($id);
+        $order->update(['status_id' => $request->status_id]);
+        return back();
+    }
+
     public function form($id)   
     {
+        $isAdmin = Gate::allows('access-admin');
         $uid = Auth::user()->id;
         $orderUser = Order::findOrFail($id);
-        if ($uid != $orderUser->user_id) return redirect('orders');
-        $address = $orderUser->address()->first() ? $orderUser->address()->first()->value : '';
-        $phone = $orderUser->phone()->first() ? $orderUser->phone()->first()->value : '';
+        if (!$isAdmin && $uid != $orderUser->user_id) return redirect('orders');
+
+        $returnData = [];
+
+        $returnData['address'] = $orderUser->address()->first() ? $orderUser->address()->first()->value : '';
+        $returnData['phone'] = $orderUser->phone()->first() ? $orderUser->phone()->first()->value : '';
         $productData = $orderUser->product->toArray();
         
-        $orderId = $orderUser->id;
-        $allSum = 0;
-        $allCnt = 0;
+        $returnData['orderId'] = $orderUser->id;
+        $returnData['allSum'] = 0;
+        $returnData['allCnt'] = 0;
+
+        if ($isAdmin) {
+            $returnData['isAdmin'] = $isAdmin;
+            $returnData['allStatus'] = Status::all();
+        }
 
         $statusModel = $orderUser->status;
-        $statusName = $statusModel->value;
-        $isCart = $orderUser->status->id === 1;
+        $returnData['statusId'] = $statusModel->id;
+        $returnData['statusName'] = $statusModel->value;
+        $returnData['isCart'] = $orderUser->status->id === 1;
 
         foreach ($productData as $data) {
             $quantity = $data['pivot']['quantity'];
-            $cost = $isCart ? $data['cost'] : $data['pivot']['cost'];
-            $allSum += $quantity * $cost;
-            $allCnt += $quantity;
+            $cost = $returnData['isCart'] ? $data['cost'] : $data['pivot']['cost'];
+            $returnData['allSum'] += $quantity * $cost;
+            $returnData['allCnt'] += $quantity;
         }
 
-        return view('order.delivery', compact('address', 'phone', 'allSum', 'allCnt', 'orderId', 'isCart', 'statusName'));
+        return view('order.delivery', compact('returnData'));
     }
 
     /**

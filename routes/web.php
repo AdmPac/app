@@ -8,7 +8,6 @@ use App\Http\Controllers\OrderController;
 
 Route::get('/', [ProductController::class, 'index'])->name('product.index');
 
-
 Route::get('/login', [AuthorizeController::class, 'login'])->name('login');
 Route::post('/login', [AuthorizeController::class, 'check'])->name('authorize.check');
 
@@ -28,6 +27,7 @@ Route::middleware(['auth', 'can:access-admin'])->group(function() {
     Route::get('/product/create', [ProductController::class, 'create'])->name('product.create');
     Route::post('/product/create', [ProductController::class, 'store'])->name('product.store');
     Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
+    Route::patch('/orders/{id}/edit', [OrderController::class, 'edit'])->name('order.form.edit');
 });
 
 Route::middleware('auth')->group(function() {
