@@ -16,11 +16,11 @@ class CartController extends Controller
 {
     public function get()
     {
-        if (Auth::check()) {
+            if (Auth::guard('api')->check()) { 
             $productsModel = Order::with('product', 'status')
-                ->where('user_id', Auth::user()->id)
-                ->where('status_id', 1) // статус=1 - текущая корзина
-                ->first();
+            ->where('user_id', Auth::user()->id)
+            ->where('status_id', 1) // статус=1 - текущая корзина
+            ->first();
             if ($productsModel) {
                 $productsData = $productsModel ? $productsModel->toArray()['product'] : [];
                 foreach ($productsData as $k => $product) {
@@ -50,7 +50,7 @@ class CartController extends Controller
     {
         if (Auth::check()) {
             $order = Order::where('status_id' , 1)->firstOrFail();
-            $item = OrderItems::where(['order_id' => $order, 'product_id' => $id])->firstOrFail();
+            $item = $order->item()->where('product_id', $id)->firstOrFail();
             $item->delete();
         } else {
             $order = session('order');
@@ -60,7 +60,7 @@ class CartController extends Controller
             ], 500);
             session(['order' => $order]);
         }
-        return response()->json($order);
+        return response()->json('Товар успешно удален');
     }
     
     public function post(Request $request, string $id)

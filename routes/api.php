@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Session\Middleware\StartSession;
 
@@ -8,13 +7,14 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\AuthController;
-
+use App\Http\Middleware\OptionalJwtMiddleware;
 
 Route::get('/products/{id}', [ProductController::class, 'get']); // Конкретный товар
 Route::get('/products', [ProductController::class, 'getAll']); // Все товары
 
 Route::middleware([
     StartSession::class,
+    OptionalJwtMiddleware::class,
 ])->group(function() {
     Route::get('/cart', [CartController::class, 'get']); // Корзина
     Route::post('/cart/{id}', [CartController::class, 'post'])->whereNumber('id'); // Добавление товара в корзину
