@@ -17,6 +17,13 @@ class Order extends Model
         'status_id',
     ];
 
+    public $casts = [
+        'user_id' => 'integer',
+        'address_id' => 'integer',
+        'phone_id' => 'integer',
+        'status_id' => 'integer',
+    ];
+
     public function status()
     {
         return $this->belongsTo(Status::class);
@@ -46,6 +53,13 @@ class Order extends Model
             'name', 
             'img', 
             'description'
+        );
+    }
+
+    public function item()
+    {
+        return $this->hasMany(
+            OrderItems::class,
         );
     }
 }
