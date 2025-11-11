@@ -19,7 +19,6 @@ class ProductController extends Controller
         return response()->json($products);
     }
 
-
     /**
      * Store a newly created resource in storage.
      */
@@ -40,7 +39,7 @@ class ProductController extends Controller
             return response()->json($product);
         }
         return response()->json([
-            'message' => 'bad create'
+            'message' => 'Ошибка создания'
         ], 500);
     }
 
@@ -74,7 +73,7 @@ class ProductController extends Controller
             return response()->json($product);
         }
         return response()->json([
-            'message' => 'bad update'
+            'message' => 'Ошибка обновления'
         ], 500);
     }
 
@@ -98,7 +97,7 @@ class ProductController extends Controller
             return response()->json($product);
         }
         return response()->json([
-            'message' => 'bad update'
+            'message' => 'Ошибка обновления'
         ], 500);
     }
 
@@ -111,11 +110,11 @@ class ProductController extends Controller
         $isDeleted = $product->delete($id);
         if ($isDeleted) {
             return response()->json([
-                'message' => 'delete success',
+                'message' => 'Успешное удаление',
             ]);
         }
         return response()->json([
-            'message' => 'bad deleted',
+            'message' => 'Ошибка удаления',
         ], 500);
     }
 }

@@ -16,16 +16,12 @@ class CartController extends Controller
 {
     public function get()
     {
-        $orderId = null;
-        $productsData = [];
         if (Auth::check()) {
             $productsModel = Order::with('product', 'status')
                 ->where('user_id', Auth::user()->id)
                 ->where('status_id', 1) // статус=1 - текущая корзина
                 ->first();
             if ($productsModel) {
-                $orderId = $productsModel->id;
-    
                 $productsData = $productsModel ? $productsModel->toArray()['product'] : [];
                 foreach ($productsData as $k => $product) {
                     $productsData[$k]['quantity'] = $product['pivot']['quantity'];
@@ -45,10 +41,9 @@ class CartController extends Controller
         foreach ($productsData as $product) {
             $allSum += $product['quantity'] * $product['cost'];
         }
-        return response()->json([
-            'products' => $productsData,
-            'allSum' => $allSum,
-        ]);
+        return response()->json(
+            $productsData,
+        );
     } 
 
     public function delete($id)
@@ -60,8 +55,8 @@ class CartController extends Controller
         } else {
             $order = session('order');
             if (isset($order[$id])) unset($order[$id]);
-            else return response()->json([ // TODO: привести ошибки к одному виду
-                "product $id not found in the cart"
+            else return response()->json([
+                "Продукт $id не найден в корзине"
             ], 500);
             session(['order' => $order]);
         }
@@ -116,29 +111,13 @@ class CartController extends Controller
         $quantity = $request->quantity;
 
         if (Auth::check()) {
-            // $cart = Order::firstOrCreate([
-            //     'user_id' => Auth::user()->id,
-            //     'status_id' => 1,
-            // ]);
-            
-            // $item = OrderItems::firstOrCreate([
-            //     'product_id' => $id,
-            //     'order_id' => $cart->id,
-            // ],[
-            //     'name' => $product->name,
-            //     'img' => $product->img,
-            //     'description' => $product->description,
-            //     'cost' => $product->cost,
-            //     'name' => $product->name,
-            //     'quantity' => 0,
-            // ]);
-            // if (($quantity += $item->quantity) > $limit) $quantity = $limit;
-
-            // $item->update(['quantity' => $quantity]);
+            $order = Order::where('user_id', Auth::id())->where('status_id', 1)->first()->item()->where('product_id', $id)->first();
+            $updated = $order->update(['quantity' => $quantity]);
+            return response()->json($order);
         } else {
             $order = Session::get('order', []);
             if (!key_exists($id, $order)) return response()->json(
-                ["product $id not found in the cart"], 500
+                ['message' => "Продукт $id не найден в корзине"], 500
             );
             $order[$id] = min($limit, $quantity);
             Session::put('order', $order);
@@ -149,7 +128,6 @@ class CartController extends Controller
     
     public function delivery(Request $request)
     {
-        // TODO: заменить на Request class
         $request->validate([
             'phone' => 'required|regex:/^\+?[0-9-]{9,}$/',
             'address' => 'required|min:1',
@@ -162,7 +140,6 @@ class CartController extends Controller
             'value' => $request->phone,
         ]);
         
-        // TODO: Заменить на политику
         $uid = Auth::id();
         $orderUser = Order::where('user_id', $uid)->where('status_id', 1)->firstOrFail();
         
@@ -176,7 +153,7 @@ class CartController extends Controller
             return response()->json($orderUser);
         }
         return response()->json([
-            'message' => 'bad updated'
+            'message' => 'bad updated', 500
         ]);
     }
 }

@@ -21,10 +21,16 @@ class AuthorizeController extends Controller
         if($user = Auth::attempt($loginData)) {
             $user = Auth::user();
             $token = $user->createToken('authToken')->plainTextToken;
+            if ($token) {
+                return response()->json([
+                    'message' => 'Успешный вход',
+                    'token' => $token,
+                ]);
+            }
             return response()->json([
-                'message' => 'Login success',
+                'message' => 'Ошибка входа',
                 'token' => $token,
-            ], 200);
+            ], 500);
         }
 
         throw ValidationException::withMessages([
@@ -37,7 +43,7 @@ class AuthorizeController extends Controller
         $request->user()->currentAccessToken()->delete();
 
         return response()->json([
-            'message' => 'logout success',
+            'message' => 'Успешный выход',
         ]);
     }
 }

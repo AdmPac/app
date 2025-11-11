@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Address;
 use App\Models\Order;
 use App\Models\Order\Status;
-use App\Models\Phone;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 
 class OrderController extends Controller
 {
@@ -63,49 +62,32 @@ class OrderController extends Controller
         return response()->json(array_values($orderData));
     }
 
-    public function edit(Request $request, $id)
+    public function patch(Request $request, $id)
     {
+        $statuses = Status::all()->toArray();
+        $request->validate([
+            'status' => [
+                'required',
+                'integer',
+                Rule::in(array_column($statuses, 'id')),
+            ],
+        ]);
+        $newStatus = $request->status;
         $order = Order::findOrFail($id);
-        $order->update(['status_id' => $request->status_id]);
-        return back();
-    }
-
-    public function form($id)   
-    {
-        $isAdmin = Gate::allows('access-admin');
-        $uid = Auth::user()->id;
-        $orderUser = Order::findOrFail($id);
-        if (!$isAdmin && $uid != $orderUser->user_id) return redirect('orders');
-
-        $returnData = [];
-
-        $returnData['address'] = $orderUser->address()->first() ? $orderUser->address()->first()->value : '';
-        $returnData['phone'] = $orderUser->phone()->first() ? $orderUser->phone()->first()->value : '';
-        $productData = $orderUser->product->toArray();
         
-        $returnData['orderId'] = $orderUser->id;
-        $returnData['allSum'] = 0;
-        $returnData['allCnt'] = 0;
-
-        if ($isAdmin) {
-            $returnData['isAdmin'] = $isAdmin;
-            $returnData['allStatus'] = Status::all();
+        if ($newStatus == 1 && $id != $order->id) {
+            $orderActive = Order::where('user_id', $order->user_id)->where('status_id', 1)->first();
+            if ($orderActive) return response()->json([
+                'message' => 'Не может быть два заказа с статусом "Ативен"', 500
+            ]);
         }
 
-        $statusModel = $orderUser->status;
-        $returnData['statusId'] = $statusModel->id;
-        $returnData['statusName'] = $statusModel->value;
-        $returnData['isCart'] = $orderUser->status->id === 1;
-
-        foreach ($productData as $data) {
-            $quantity = $data['pivot']['quantity'];
-            $cost = $returnData['isCart'] ? $data['cost'] : $data['pivot']['cost'];
-            $returnData['allSum'] += $quantity * $cost;
-            $returnData['allCnt'] += $quantity;
+        $update = $order->update(['status_id' => $newStatus]);
+        if ($update) {
+            return response()->json($order);
         }
-
-        // return view('order.delivery', compact('returnData'));
+        return response()->json([
+            'message' => 'Ошибка обновления',
+        ], 500);
     }
-
-   
 }
