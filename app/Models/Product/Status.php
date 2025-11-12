@@ -9,7 +9,8 @@ class Status extends Model
 {
     protected $table = "product_statuses";
     protected $fillable = [
-        'name'
+        'name',
+        'code'
     ];
     public function product()
     {

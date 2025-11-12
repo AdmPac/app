@@ -9,7 +9,8 @@ class Type extends Model
 {
     protected $table = "product_types";
     protected $fillable = [
-        'name'
+        'name',
+        'code'
     ];
     public function products()
     {
