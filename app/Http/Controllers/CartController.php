@@ -17,7 +17,7 @@ class CartController extends Controller
 {
     public function get()
     {
-            if (Auth::guard('api')->check()) { 
+        if (Auth::check()) { 
             $productsModel = Order::with('product', 'status')
             ->where('user_id', Auth::user()->id)
             ->whereHas('status', function ($q) {
@@ -121,10 +121,10 @@ class CartController extends Controller
                 ->whereHas('status', function ($q) {
                     $q->where('code', 1);
                 })
-                ->first()
+                ->firstOrFail()
                 ->item()
                 ->where('product_id', $id)
-                ->first();
+                ->firstOrFail();
             $updated = $order->update(['quantity' => $quantity]);
             return response()->json($order);
         } else {
@@ -159,7 +159,6 @@ class CartController extends Controller
                 $q->where('code', 1);
             })
             ->firstOrFail();
-        
         $deliveredStatusId = OrderStatus::where('code', 2)->value('id');
         $updated = $orderUser->update([
             'status_id' => $deliveredStatusId,
@@ -171,7 +170,7 @@ class CartController extends Controller
             return response()->json($orderUser);
         }
         return response()->json([
-            'message' => 'bad updated', 500
+            'message' => 'Ошибка обновления заказа', 500
         ]);
     }
 }
