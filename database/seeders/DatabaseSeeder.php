@@ -46,10 +46,10 @@ class DatabaseSeeder extends Seeder
         Address::factory(10)->create();
         
         $orderStatus = [
-            ['value' => 'Активен'],
-            ['value' => 'В обработке'],
-            ['value' => 'В доставке'],
-            ['value' => 'Завершен'],
+            ['value' => 'Активен', 'code' => 1,],
+            ['value' => 'В обработке', 'code' => 2],
+            ['value' => 'В доставке', 'code' => 3],
+            ['value' => 'Завершен', 'code' => 4],
         ];
         OrderStatus::truncate();
         OrderStatus::insert($orderStatus);

@@ -11,17 +11,20 @@ use App\Models\Phone;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Product;
 use Illuminate\Support\Facades\Session;
+use App\Models\Order\Status as OrderStatus;
 
 class CartController extends Controller
 {
     public function get()
     {
-            if (Auth::guard('api')->check()) { 
+        if (Auth::check()) { 
             $productsModel = Order::with('product', 'status')
             ->where('user_id', Auth::user()->id)
-            ->where('status_id', 1) // статус=1 - текущая корзина
+            ->whereHas('status', function ($q) {
+                $q->where('code', 1); // статус code=1 - текущая корзина
+            })
             ->first();
-            if ($productsModel) {
+            if ($productsModel) { 
                 $productsData = $productsModel ? $productsModel->toArray()['product'] : [];
                 foreach ($productsData as $k => $product) {
                     $productsData[$k]['quantity'] = $product['pivot']['quantity'];
@@ -49,7 +52,9 @@ class CartController extends Controller
     public function delete($id)
     {
         if (Auth::check()) {
-            $order = Order::where('status_id' , 1)->firstOrFail();
+            $order = Order::whereHas('status', function ($q) {
+                $q->where('code', 1);
+            })->firstOrFail();
             $item = $order->item()->where('product_id', $id)->firstOrFail();
             $item->delete();
         } else {
@@ -72,9 +77,10 @@ class CartController extends Controller
         ]);
         $quantity = $request->quantity;
         if (Auth::check()) {
+            $activeStatusId = OrderStatus::where('code', 1)->value('id');
             $cart = Order::firstOrCreate([
                 'user_id' => Auth::user()->id,
-                'status_id' => 1,
+                'status_id' => $activeStatusId,
             ]);
             
             $item = OrderItems::firstOrCreate([
@@ -111,7 +117,14 @@ class CartController extends Controller
         $quantity = $request->quantity;
 
         if (Auth::check()) {
-            $order = Order::where('user_id', Auth::id())->where('status_id', 1)->first()->item()->where('product_id', $id)->first();
+            $order = Order::where('user_id', Auth::id())
+                ->whereHas('status', function ($q) {
+                    $q->where('code', 1);
+                })
+                ->firstOrFail()
+                ->item()
+                ->where('product_id', $id)
+                ->firstOrFail();
             $updated = $order->update(['quantity' => $quantity]);
             return response()->json($order);
         } else {
@@ -141,10 +154,14 @@ class CartController extends Controller
         ]);
         
         $uid = Auth::id();
-        $orderUser = Order::where('user_id', $uid)->where('status_id', 1)->firstOrFail();
-        
+        $orderUser = Order::where('user_id', $uid)
+            ->whereHas('status', function ($q) {
+                $q->where('code', 1);
+            })
+            ->firstOrFail();
+        $deliveredStatusId = OrderStatus::where('code', 2)->value('id');
         $updated = $orderUser->update([
-            'status_id' => 2,
+            'status_id' => $deliveredStatusId,
             'address_id' => $address->id,
             'phone_id' => $phone->id,
         ]);
@@ -153,7 +170,7 @@ class CartController extends Controller
             return response()->json($orderUser);
         }
         return response()->json([
-            'message' => 'bad updated', 500
+            'message' => 'Ошибка обновления заказа', 500
         ]);
     }
 }

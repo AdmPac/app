@@ -11,11 +11,10 @@ use Illuminate\Validation\Rule;
 
 class OrderController extends Controller
 {
-    public function getByuID($uid)
+    public function getByID($uid)
     {
         $orders = Order::where('user_id', $uid)->get();
         $orderData = [];
-        
         foreach ($orders as &$order) {
             $phone = $order->phone ? $order->phone->value : '';
             $address = $order->address ? $order->address->value : '';
@@ -73,10 +72,15 @@ class OrderController extends Controller
             ],
         ]);
         $newStatus = $request->status;
+        $newStatusCode = Status::where('id', $newStatus)->value('code');
         $order = Order::findOrFail($id);
         
-        if ($newStatus == 1 && $id != $order->id) {
-            $orderActive = Order::where('user_id', $order->user_id)->where('status_id', 1)->first();
+        if ($newStatusCode == 1 && $id != $order->id) {
+            $orderActive = Order::where('user_id', $order->user_id)
+                ->whereHas('status', function ($q) {
+                    $q->where('code', 1);
+                })
+                ->first();
             if ($orderActive) return response()->json([
                 'message' => 'Не может быть два заказа с статусом "Ативен"', 500
             ]);

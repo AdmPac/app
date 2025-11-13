@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order\Status;
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\Product\Status as ProductStatus;
 
 /**
  * Отвечает за продукты
@@ -15,7 +17,10 @@ class ProductController extends Controller
      */
     public function getAll()
     {
-        $products = Product::where('status_id', 1)->with('status')->get();
+        $products = Product::whereHas('status', function ($q) {
+            $q->where('code', 1);
+        })->with('status')->get();
+        
         return response()->json($products);
     }
 
@@ -48,8 +53,12 @@ class ProductController extends Controller
      */
     public function get(string $id)
     {
-        $products = Product::where('id', $id)->where('status_id', 1)->firstOrFail();
-        return response()->json($products);
+        $product = Product::where('id', $id)
+            ->whereHas('status', function ($q) {
+                $q->where('code', 1);
+            })
+            ->firstOrFail();
+        return response()->json($product);
     }
 
     /**
@@ -66,7 +75,7 @@ class ProductController extends Controller
             'status_id' => 'sometimes|nullable|integer',
             'limit' => 'sometimes|nullable|integer',
         ]);
-
+        if (!$request->all()) return response()->json(['message' => 'Пустые данные'], 500);
         $product = Product::findOrFail($id);
         $update = $product->update($request->all());
         if ($product && $update) {
