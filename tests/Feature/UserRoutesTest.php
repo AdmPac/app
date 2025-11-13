@@ -18,7 +18,7 @@ class UserRoutesTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->token = $this->authToken();
+        $this->token = $this->authToken()['token'];
     }
 
     public function testUser(): void

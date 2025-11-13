@@ -27,6 +27,6 @@ trait AuthTests
         ];
         $response = $this->post('/api/login', $loginData);
         $token = $response->json('token');
-        return $token;
+        return ['token' => $token, 'user' => $user];
     }
 }

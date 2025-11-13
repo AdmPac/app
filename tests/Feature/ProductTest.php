@@ -60,7 +60,7 @@ class ProductTest extends TestCase
 
     public function testProductDeleteSuccess(): void
     {
-        $token = $this->authToken(true);
+        $token = $this->authToken(true)['token'];
         $product = Product::factory()->create();
         $response = $this->deleteJson('/api/products/' . $product->id, [], [
             'Authorization' => 'Bearer ' . $token,
@@ -72,7 +72,7 @@ class ProductTest extends TestCase
     {
         $statuses = Status::all()->toArray();
         $product = Product::factory()->state(['status_id' => $this->statusCodeActive])->create();
-        $token = $this->authToken(true);
+        $token = $this->authToken(true)['token'];
         $response = $this->putJson('/api/products/' . $product->id, $this->productSuccess, [
             'Authorization' => "Bearer $token"
         ]);
@@ -81,7 +81,7 @@ class ProductTest extends TestCase
 
     public function testProductPostSuccess(): void
     {
-        $token = $this->authToken(true);
+        $token = $this->authToken(true)['token'];
         $response = $this->postJson('/api/products/', $this->productSuccess, [
             'Authorization' => "Bearer $token"
         ]);
@@ -90,7 +90,7 @@ class ProductTest extends TestCase
 
     public function testProductPostFailed(): void
     {
-        $token = $this->authToken(true);
+        $token = $this->authToken(true)['token'];
         $product = Product::factory()->state(['status_id' => $this->statusCodeActive])->create();
         $response = $this->putJson('/api/products/' . $product->id, self::PRODUCT_FAIL, [
             'Authorization' => "Bearer $token"
@@ -100,7 +100,7 @@ class ProductTest extends TestCase
 
     public function testProductPatchSuccess(): void
     {
-        $token = $this->authToken(true);
+        $token = $this->authToken(true)['token'];
         $product = Product::factory()->state(['status_id' => $this->statusCodeActive])->create();
         $response = $this->patchJson('/api/products/' . $product->id, [
             'img' => 'https://google.com',
@@ -112,7 +112,7 @@ class ProductTest extends TestCase
 
     public function testProductPatchFail(): void
     {
-        $token = $this->authToken(true);
+        $token = $this->authToken(true)['token'];
         $product = Product::factory()->state(['status_id' => $this->statusCodeActive])->create();
         $response = $this->patchJson('/api/products/' . $product->id, [], [
             'Authorization' => "Bearer $token"
@@ -122,7 +122,7 @@ class ProductTest extends TestCase
 
     public function testProductPutFailed(): void
     {
-        $token = $this->authToken(true);
+        $token = $this->authToken(true)['token'];
         $product = Product::factory()->state(['status_id' => $this->statusCodeActive])->create();
         $response = $this->putJson('/api/products/' . $product->id, self::PRODUCT_FAIL, [
             'Authorization' => "Bearer $token"
