@@ -53,12 +53,12 @@ class OrderTest extends TestCase
             'address_id' => Address::inRandomOrder()->value('id'),
         ])->create();
 
-        $response = $this->patchJson('/api/orders', [
+        $response = $this->patchJson('/api/orders/' . $order->id, [
             'status' => 2,
         ], [
-            'Authorization' => 'Bearer ' . $token
+            'Authorization' => 'Bearer ' . $token,
         ]);
-        $response->assertStatus(405);
+        $response->assertStatus(403);
     }
 
     public function testOrdersGetByIdUnauthorized(): void
