@@ -8,6 +8,10 @@ use App\Models\Product;
 class Status extends Model
 {
     protected $table = "product_statuses";
+    protected $fillable = [
+        'name',
+        'code'
+    ];
     public function product()
     {
         return $this->hasMany(Product::class);

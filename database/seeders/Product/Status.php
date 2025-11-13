@@ -17,8 +17,8 @@ class Status extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS=0;'); // игнорируем проверку внешних ключей
         ProductStatus::truncate();
         ProductStatus::insert([
-            ['name' => 'Активен'],
-            ['name' => 'Не активен'],
+            ['name' => 'Активен', 'code' => 1],
+            ['name' => 'Не активен', 'code' => 2],
         ]);
     }
 }

@@ -14,13 +14,14 @@ class OrderItems extends Model
         'description',
         'img',
         'quantity',
-        'cost' => 'float',
+        'cost',
         'product_id',
         'order_id',
     ];
 
     public $casts = [
-        'quantity' => 'integer'
+        'quantity' => 'integer',
+        'cost' => 'float'
     ];
 
     public function product()

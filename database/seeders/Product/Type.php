@@ -17,8 +17,8 @@ class Type extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         ProductType::truncate();
         ProductType::insert([
-            ['name' => 'Напиток'],
-            ['name' => 'Пицца'],
+            ['name' => 'Напиток', 'code' => 1],
+            ['name' => 'Пицца', 'code' => 2],
         ]);
     }
 }

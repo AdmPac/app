@@ -21,17 +21,16 @@ class OrderFactory extends Factory
      */
     public function definition(): array
     {
-        $statusOrder = Status::pluck('id')->toArray();
-
-        $phones = Phone::pluck('id')->toArray();
-        $users = User::pluck('id')->toArray();
-        $addresses = Address::pluck('id')->toArray();
+        $statusOrder = Status::inRandomOrder()->value('id');
+        $phones = Phone::inRandomOrder()->value('id');
+        $users = User::inRandomOrder()->value('id');
+        $addresses = Address::inRandomOrder()->value('id');
         
         return [
-            'user_id' => fake()->randomElement($users),
-            'phone_id' => fake()->randomElement($phones),
-            'address_id' => fake()->randomElement($addresses),
-            'status_id' => fake()->numberBetween(2, count($statusOrder)),
+            'user_id' => $users,
+            'phone_id' => $phones,
+            'address_id' => $addresses,
+            'status_id' => $statusOrder,
         ];
     }
 }
