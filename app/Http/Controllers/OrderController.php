@@ -11,11 +11,10 @@ use Illuminate\Validation\Rule;
 
 class OrderController extends Controller
 {
-    public function getByuID($uid)
+    public function getByID($uid)
     {
         $orders = Order::where('user_id', $uid)->get();
         $orderData = [];
-        
         foreach ($orders as &$order) {
             $phone = $order->phone ? $order->phone->value : '';
             $address = $order->address ? $order->address->value : '';
