@@ -27,6 +27,14 @@ services:
             - meilisearch
             - mailpit
             - selenium
+        healthcheck:
+            test: 
+                - CMD-SHELL
+                - curl -fsS http://localhost:80/api/healthcheck | grep -q '"status":"ok"'
+            interval: 10s
+            timeout: 5s
+            retries: 3
+            start_period: 30s
     mysql:
         image: 'mysql/mysql-server:8.0'
         ports:

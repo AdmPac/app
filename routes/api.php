@@ -45,3 +45,7 @@ Route::middleware('jwt')->group(function () {
     Route::put('/user', [AuthController::class, 'updateUser']);
     Route::post('/logout', [AuthController::class, 'logout']);
 });
+
+Route::get('/healthcheck', function () {
+    return response()->json(['status' => 'ok'], 200);
+});
