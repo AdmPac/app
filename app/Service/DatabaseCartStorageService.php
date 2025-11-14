@@ -28,8 +28,9 @@ class DatabaseCartStorageService implements CartStorageInterface
                 $productsData[$k]['quantity'] = $product['pivot']['quantity'];
                 $productsData[$k]['order_id'] = $product['pivot']['order_id'];
             }
+            return $productsData;
         }
-        return $productsData;
+        return [];
     }
 
     public function delete($id): bool
@@ -112,12 +113,12 @@ class DatabaseCartStorageService implements CartStorageInterface
         ]);
         
         $uid = Auth::id();
+        
+        $deliveredStatusId = Status::where('code', 1)->value('id');
         $orderUser = Order::where('user_id', $uid)
-            ->whereHas('status', function ($q) {
-                $q->where('code', 1);
-            })
+            ->where('status_id', $deliveredStatusId)
             ->firstOrFail();
-        $deliveredStatusId = Status::where('code', 2)->value('id');
+
         $updated = $orderUser->update([
             'status_id' => $deliveredStatusId,
             'address_id' => $address->id,

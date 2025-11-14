@@ -15,7 +15,6 @@ class SessionCartStorageService implements CartStorageInterface
 {
 	public function get(): array
 	{
-        return [Auth::check()];
 		$quantity = session('order') ?? [];
 		$productsData = Product::whereIn('id', array_keys($quantity))->get();
 		$productsData = $productsData->map(function($product) use ($quantity) {
@@ -23,8 +22,7 @@ class SessionCartStorageService implements CartStorageInterface
 			return $product;
 		});
 		$productsData = $productsData->toArray();
-        return [Auth::guard('api')->user()];
-        return [Auth::check()];
+
 		return $productsData;
 	}
 
@@ -33,6 +31,7 @@ class SessionCartStorageService implements CartStorageInterface
 		$order = session('order');
 		if (isset($order[$id])) unset($order[$id]);
 		else throw new NotFoundResourceException("Продукт $id не найден в корзине");
+
 		return true;
 	}
 
@@ -51,6 +50,7 @@ class SessionCartStorageService implements CartStorageInterface
 		if (($order[$id] += $quantity) > $limit) $order[$id] = $limit;
 		
 		Session::put('order', $order);
+		
 		return true;
 	}
 

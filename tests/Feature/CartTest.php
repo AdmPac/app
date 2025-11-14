@@ -10,7 +10,6 @@ use App\Models\Phone;
 use App\Models\Product;
 use App\Models\Product\Status;
 use App\Models\Product\Type;
-use GuzzleHttp\Handler\Proxy;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\Feature\Traits\AuthTests;
@@ -29,10 +28,10 @@ class CartTest extends TestCase
 
     public function testCartPostProductFailValidation(): void
     {
-        $product = Status::create(['name' => 'Активен', 'code' => 1]);
+        $status = Status::create(['name' => 'Активен', 'code' => 1]);
         $type = Type::create(['name' => 'Активен', 'code' => 1]);
         $product = Product::factory()->state([
-            'status_id' => $product->id,
+            'status_id' => $status->id,
             'type_id' => $type->id,
         ])->create();
         $response = $this->postJson('/api/cart/' . $product->id, [
@@ -58,9 +57,8 @@ class CartTest extends TestCase
     public function testCartDeliverySuccess(): void
     {
         $authData = $this->authToken();
-        $status = OrderStatus::insert([
+        OrderStatus::insert([
             ['value' => 'Активен', 'code' => 1],
-            ['value' => 'Доставлен', 'code' => 2],
         ]);
         Phone::insert([
             ['value' => '+79999999999'],
@@ -78,7 +76,7 @@ class CartTest extends TestCase
             'phone_id' => Phone::inRandomOrder()->value('id'),
             'address_id' => Address::inRandomOrder()->value('id'),
         ])->create();
-
+        
         $response = $this->postJson('/api/cart/delivery', [
             'phone' => '+79999999999',
             'address' => 'Москва, ул. Ленина, 12345',
