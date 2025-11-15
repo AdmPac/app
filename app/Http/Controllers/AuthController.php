@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AuthRegisterRequest;
 use App\Services\AuthService;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -12,10 +13,10 @@ class AuthController extends Controller
     {
     }
 
-    public function register(Request $request)
+    public function register(AuthRegisterRequest $request)
     {
         try {
-            $register = $this->service->register($request);
+            $register = $this->service->register($request->validated());
         } catch (JWTException $e) {
             return response()->json(['error' => 'Could not create token'], 500);
         }
