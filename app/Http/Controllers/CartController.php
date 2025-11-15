@@ -13,8 +13,8 @@ class CartController extends Controller
 
     public function __construct(private CartStorageInterface $cartStorage)
     {
-        $this->cartStorage = $cartStorage;
     }
+    
     public function get()
     {
         $productData = $this->cartStorage->get();

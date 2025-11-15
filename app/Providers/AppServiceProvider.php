@@ -3,8 +3,8 @@
 namespace App\Providers;
 
 use App\Contracts\CartStorageInterface;
-use App\Service\DatabaseCartStorageService;
-use App\Service\SessionCartStorageService;
+use App\Services\DatabaseCartStorageService;
+use App\Services\SessionCartStorageService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 

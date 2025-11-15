@@ -1,12 +1,10 @@
 <?php
 
-namespace App\Service;
+namespace App\Services;
 
 use App\Contracts\CartStorageInterface;
 use Illuminate\Http\Request;
-
 use App\Models\Product;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
