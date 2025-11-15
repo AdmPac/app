@@ -132,7 +132,7 @@ class ProductTest extends TestCase
 
     public function testProductIdFailed(): void
     {
-        $maxId = Product::max('id');
+        $maxId = (int)Product::max('id');
         $falseId = $maxId + 1;
         $response = $this->getJson('/api/products/' . $falseId);
         $response->assertStatus(404);
