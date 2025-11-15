@@ -4,26 +4,26 @@ namespace App\Services;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
+use App\Repository\UserRepository;
 use Illuminate\Support\Facades\Auth;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 
 class AuthService
 {
-    public function register(array $request): array
-    {
-        $user = User::create([
-            'name' => $request['name'],
-            'email' => $request['email'],
-            'password' => Hash::make($request['password']),
-        ]);
+    public function __construct(private UserRepository $repository) {}
 
+    public function register(array $request): User
+    {
+        $user = $this->repository->create($request);
+        return $user;
+    }
+
+    public function getToken(User $user): string
+    {
         $token = JWTAuth::fromUser($user);
-        return [
-            'token' => $token,
-            'user' => $user,
-        ];
+        return $token;
+
     }
 
     public function login(Request $request): string
@@ -51,7 +51,7 @@ class AuthService
     public function updateUser(Request $request)
     {
         $user = Auth::user();
-        $user->update($request->only(['name', 'email']));
+        $this->repository->update($user, $request->only(['name', 'email']));
         return $user;
     }
 }

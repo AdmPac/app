@@ -15,16 +15,18 @@ class AuthController extends Controller
 
     public function register(AuthRegisterRequest $request)
     {
+        $validatedData = $request->validated();
         try {
-            $register = $this->service->register($request->validated());
+            $user = $this->service->register($validatedData);
+            $token = $this->service->getToken($user);
+            return response()->json([
+                'token' => $token,
+                'user' => $user,
+            ], 201);
         } catch (JWTException $e) {
             return response()->json(['error' => 'Could not create token'], 500);
         }
 
-        return response()->json([
-            'token' => $register['token'],
-            'user' => $register['user'],
-        ], 201);
     }
 
     public function login(Request $request)
