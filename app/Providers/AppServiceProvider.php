@@ -14,9 +14,9 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(CartStorageInterface::class, function ($app) {
             if (Auth::check()) {
-                return new DatabaseCartStorageService();
+                return $app->make(DatabaseCartStorageService::class);
             }
-            return new SessionCartStorageService();
+            return $app->make(SessionCartStorageService::class);
         });
     }
 

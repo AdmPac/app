@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Contracts\CartStorageInterface;
-use Illuminate\Http\Request;
+use App\Http\Requests\CartAddRequest;
+use App\Http\Requests\CartPatchRequest;
+use App\Http\Requests\CartDeliveryRequest;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
@@ -34,7 +36,7 @@ class CartController extends Controller
         }
     }
     
-    public function post(Request $request, string $id)
+    public function post(CartAddRequest $request, string $id)
     {
         try {
             $result = $this->cartStorage->post($request, $id);
@@ -52,7 +54,7 @@ class CartController extends Controller
         }
     }
 
-    public function patch(Request $request, $id)
+    public function patch(CartPatchRequest $request, $id)
     {
         try {
             $result = $this->cartStorage->patch($request, $id);
@@ -71,7 +73,7 @@ class CartController extends Controller
     }
     
     
-    public function delivery(Request $request)
+    public function delivery(CartDeliveryRequest $request)
     {
         try {
             $result = $this->cartStorage->delivery($request);
