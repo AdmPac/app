@@ -33,10 +33,10 @@ class DatabaseCartStorageService implements CartStorageInterface
         return $this->repository->deleteProduct($id);
     }
 
-    public function post(Request $request, string $id): bool
+    public function post(array $request, string $id): bool
     {
         $product = Product::findOrFail($id);
-        $quantity = (int) $request->quantity;
+        $quantity = (int) $request['quantity'];
         
         $orderItem = $this->repository->findOrCreateOrderItem($product, $id);
 
@@ -47,17 +47,17 @@ class DatabaseCartStorageService implements CartStorageInterface
         return $updated;
     }
 
-    public function patch(Request $request, $id): bool
+    public function patch(array $request, $id): bool
     {
         $product = Product::findOrFail($id);
-        $quantity = (int) $request->quantity;
+        $quantity = (int) $request['quantity'];
         $updated = $this->repository->updateQuantityProductCart($product->id, $quantity);
         return $updated;
     }
 
-    public function delivery(Request $request): bool
+    public function delivery(array $request): bool
     {
-        $updated = $this->repository->deliveryActiveOrder($request->phone, $request->address);
+        $updated = $this->repository->deliveryActiveOrder($request['phone'], $request['address']);
         return $updated;
     }
 }

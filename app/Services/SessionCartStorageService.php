@@ -33,15 +33,13 @@ class SessionCartStorageService implements CartStorageInterface
 		return true;
 	}
 
-	public function post(Request $request, string $id): bool
+	public function post(array $request, string $id): bool
 	{
 		$product = Product::findOrFail($id);
 		$limit = $product->limit;
-		$request->validate([
-			'quantity' => "required|integer|min:1|max:$limit"
-		]);
 
-		$quantity = $request->quantity;
+
+		$quantity = $request['quantity'];
 
 		$order = Session::get('order', []);
 		if (!key_exists($id, $order)) $order[$id] = 0; 
@@ -52,14 +50,11 @@ class SessionCartStorageService implements CartStorageInterface
 		return true;
 	}
 
-	public function patch(Request $request, $id): bool
+	public function patch(array $request, $id): bool
 	{
 		$product = Product::findOrFail($id);
 		$limit = $product->limit;
-		$request->validate([
-			'quantity' => "required|integer|min:1|max:$limit"
-		]);
-		$quantity = $request->quantity;
+		$quantity = $request['quantity'];
 
 		$order = Session::get('order', []);
 		if (!key_exists($id, $order)) throw new NotFoundResourceException("Продукт $id не найден в корзине");
@@ -69,7 +64,7 @@ class SessionCartStorageService implements CartStorageInterface
 		return true;
 	}
 
-	public function delivery(Request $request): bool
+	public function delivery(array $request): bool
 	{
 		throw new UnauthorizedHttpException('Bearer', 'Авторизуйтесь для оформления заказа');
 	}
