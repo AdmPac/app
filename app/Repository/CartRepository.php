@@ -8,9 +8,7 @@ use App\Models\Order\Status;
 use App\Models\OrderItems;
 use App\Models\Phone;
 use App\Models\Product;
-use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 
 class CartRepository
 {
@@ -110,5 +108,15 @@ class CartRepository
             'phone_id' => $phone->id,
         ]);
         return $updated;
+    }
+
+    public function getOrderActiveByUserId(int $uid): Order
+    {
+        $orderActive = Order::where('user_id', $uid)
+            ->whereHas('status', function ($q) {
+                $q->where('code', 1);
+            })
+            ->first();
+        return $orderActive;
     }
 }

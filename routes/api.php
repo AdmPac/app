@@ -33,7 +33,7 @@ Route::middleware(['jwt.auth', 'can:access-admin'])->group(function() {
     Route::patch('/products/{id}', [ProductController::class, 'patch']); // Изменение товара - частичное
     Route::post('/products', [ProductController::class, 'post']); // Добавление товара
     
-    Route::get('/orders/{uid}', [OrderController::class, 'getByID']); // заказы определенного юзера
+    Route::get('/orders/{uid}', [OrderController::class, 'getByUserID']); // заказы определенного юзера
     Route::patch('/orders/{id}', [OrderController::class, 'patch']); // заказы определенного юзера
 });
 

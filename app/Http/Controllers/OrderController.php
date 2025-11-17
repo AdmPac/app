@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StatusPatchRequest;
 use App\Services\OrderService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -12,22 +13,22 @@ class OrderController extends Controller
     {
     }
     
-    public function getByID($uid): JsonResponse
+    public function getByUserID($uid): JsonResponse
     {
-        $orderData = $this->service->getByID($uid);
-        return response()->json(array_values($orderData));
+        $orderData = $this->service->getByUserID($uid);
+        return response()->json($orderData);
     }
 
     public function get(): JsonResponse
     {
         $orderData = $this->service->get();
-        return response()->json(array_values($orderData));
+        return response()->json($orderData);
     }
 
-    public function patch(Request $request, $id): JsonResponse
+    public function patch(StatusPatchRequest $request, $id): JsonResponse
     {
         try {
-            $update = $this->service->patch($request, $id);
+            $update = $this->service->patch($request->validated(), $id);
             if ($update) {
                 return response()->json([
                     'message' => 'Заказ успешно обновлен',

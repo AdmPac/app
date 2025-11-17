@@ -2,86 +2,49 @@
 
 namespace App\Services;
 
+use App\Http\Requests\StatusPatchRequest;
+use App\Http\Resources\OrderResoource;
 use App\Models\Order;
 use App\Models\Order\Status;
+use App\Repository\CartRepository;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Validation\Rule;
 
 class OrderService
 {
-    public function getByID(int $uid): array
+    public function __construct(private CartRepository $repository)
     {
-        $orders = Order::where('user_id', $uid)->get();
-        $orderData = [];
-        foreach ($orders as &$order) {
-            $phone = $order->phone ? $order->phone->value : '';
-            $address = $order->address ? $order->address->value : '';
-            $orderData[$order->id] = [
-                'id' => $order->id,
-                'status' => $order->status->value,
-                'phone' => $phone,
-                'address' => $address,
-            ];
-            $products = $order->product()->get();
-            foreach ($products as $product) {
-                $orderData[$order->id]['name'] = $product->pivot->name;
-                $orderData[$order->id]['quantity'] = $product->pivot->quantity;
-                $orderData[$order->id]['cost'] = $product->pivot->cost;
-                $orderData[$order->id]['cost_all'] = $product->pivot->cost;
-            }
-        }
-
-        return $orderData;
+        
     }
 
-    public function get(): array
+    public function getByUserID(int $uid)
+    {
+        $orders = Order::where('user_id', $uid)
+            ->with(['phone', 'address', 'product'])
+            ->get();
+
+        return OrderResoource::collection($orders);
+    }
+
+    public function get(): ResourceCollection
     {
         $isAdmin = Gate::allows('access-admin');
-        $orders = $isAdmin ? Order::all() : Order::where('user_id', Auth::id())->get(); // TODO: вынести в политики
-        $orderData = [];
-        
-        foreach ($orders as &$order) {
-            $phone = $order->phone ? $order->phone->value : '';
-            $address = $order->address ? $order->address->value : '';
-            $orderData[$order->id] = [
-                'id' => $order->id,
-                'status' => $order->status->value,
-                'phone' => $phone,
-                'address' => $address,
-            ];
-            $products = $order->product()->get();
-            foreach ($products as $product) {
-                $orderData[$order->id]['name'] = $product->pivot->name;
-                $orderData[$order->id]['quantity'] = $product->pivot->quantity;
-                $orderData[$order->id]['cost'] = $product->pivot->cost;
-                $orderData[$order->id]['cost_all'] = $product->pivot->cost;
-            }
-        }
-        return $orderData;
+        $order = Order::query();
+        $order->with('phone', 'address', 'product');
+        $orders = $isAdmin ? $order->get() : $order->where('user_id', Auth::id())->get();
+        return OrderResoource::collection($orders);
     }
     
-    public function patch(Request $request, int $id): bool
+    public function patch(array $request, int $id): bool
     {
-        $statuses = Status::all()->toArray();
-        $request->validate([
-            'status' => [
-                'required',
-                'integer',
-                Rule::in(array_column($statuses, 'id')),
-            ],
-        ]);
-        $newStatus = $request->status;
+        $newStatus = $request['status'];
         $newStatusCode = Status::where('id', $newStatus)->value('code');
         $order = Order::findOrFail($id);
         
         if ($newStatusCode == 1 && $id != $order->id) {
-            $orderActive = Order::where('user_id', $order->user_id)
-                ->whereHas('status', function ($q) {
-                    $q->where('code', 1);
-                })
-                ->first();
+            $orderActive = $this->repository->getOrderActiveByUserId($order->user_id);
             if ($orderActive) throw new \Exception('Не может быть два заказа с статусом "Ативен');
         }
 

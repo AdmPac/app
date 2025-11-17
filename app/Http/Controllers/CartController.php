@@ -54,7 +54,7 @@ class CartController extends Controller
         }
     }
 
-    public function patch(CartPatchRequest $request, $id)
+    public function patch(CartAddRequest $request, $id)
     {
         try {
             $result = $this->cartStorage->patch($request, $id);
