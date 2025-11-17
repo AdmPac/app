@@ -2,46 +2,39 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Order\Status;
-use Illuminate\Http\Request;
-use App\Models\Product;
-use App\Models\Product\Status as ProductStatus;
+use App\Http\Requests\ProductPatchRequest;
+use App\Http\Requests\ProductPostRequest;
+use App\Http\Requests\ProductPutRequest;
+use App\Services\ProductService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 /**
  * Отвечает за продукты
  */
 class ProductController extends Controller
 {
+    public function __construct(private ProductService $service)
+    {
+    }
+    
     /**
      * Display a listing of the resource.
      */
-    public function getAll()
+    public function getAll(): JsonResponse
     {
-        $products = Product::whereHas('status', function ($q) {
-            $q->where('code', 1);
-        })->with('status')->get();
-        
+        $products = $this->service->getAll();
         return response()->json($products);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function post(Request $request)
+    public function post(ProductPostRequest $request): JsonResponse
     {
-        $request->validate([
-            'img' => 'required|string',
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'cost' => 'required|numeric',
-            'type_id' => 'required|integer',
-            'status_id' => 'required|integer',
-            'limit' => 'required|integer',
-        ]);
-
-        $product = Product::create($request->all());
-        if ($product) {
-            return response()->json($product);
+        $products = $this->service->post($request->validated());
+        if ($products) {
+            return response()->json($products);
         }
         return response()->json([
             'message' => 'Ошибка создания'
@@ -51,35 +44,20 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function get(string $id)
+    public function get(int $id): JsonResponse
     {
-        $product = Product::where('id', $id)
-            ->whereHas('status', function ($q) {
-                $q->where('code', 1);
-            })
-            ->firstOrFail();
-        return response()->json($product);
+        $products = $this->service->get($id);
+        return response()->json($products);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function patch(Request $request, string $id)
+    public function patch(ProductPatchRequest $request, int $id): JsonResponse
     {
-        $request->validate([
-            'img' => 'sometimes|string',
-            'name' => 'sometimes|nullable|string|max:255',
-            'description' => 'sometimes|nullable|nullable|string',
-            'cost' => 'sometimes|nullable|numeric',
-            'type_id' => 'sometimes|nullable|integer',
-            'status_id' => 'sometimes|nullable|integer',
-            'limit' => 'sometimes|nullable|integer',
-        ]);
-        if (!$request->all()) return response()->json(['message' => 'Пустые данные'], 500);
-        $product = Product::findOrFail($id);
-        $update = $product->update($request->all());
-        if ($product && $update) {
-            return response()->json($product);
+        $update = $this->service->patch($request->validated(), $id);
+        if ($update) {
+            return response()->json(['message' => 'Продукт успешно обновлен']);
         }
         return response()->json([
             'message' => 'Ошибка обновления'
@@ -89,21 +67,11 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function put(Request $request, string $id)
+    public function put(ProductPutRequest $request, int $id): JsonResponse
     {
-        $request->validate([
-            'img' => 'required|string',
-            'name' => 'required|string|max:255',
-            'description' => 'required|nullable|string',
-            'cost' => 'required|numeric',
-            'type_id' => 'required|integer',
-            'status_id' => 'required|integer',
-            'limit' => 'required|integer',
-        ]);
-        $product = Product::findOrFail($id);
-        $update = $product->update($request->all());
-        if ($product && $update) {
-            return response()->json($product);
+        $update = $this->service->put($request->validated(), $id);
+        if ($update) {
+            return response()->json(['message' => 'Продукт успешно обновлен']);
         }
         return response()->json([
             'message' => 'Ошибка обновления'
@@ -113,10 +81,9 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function delete(string $id)
+    public function delete(int $id): JsonResponse
     {
-        $product = Product::findOrFail($id);
-        $isDeleted = $product->delete($id);
+        $isDeleted = $this->service->delete($id);
         if ($isDeleted) {
             return response()->json([
                 'message' => 'Успешное удаление',

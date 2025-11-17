@@ -4,7 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Address;
 use App\Models\Order;
-use App\Models\Order\Status;
+use App\Models\Order\OrderStatus as Status;
 use App\Models\Phone;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;

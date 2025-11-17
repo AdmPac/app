@@ -2,21 +2,24 @@
 
 namespace App\Providers;
 
+use App\Contracts\CartStorageInterface;
+use App\Services\DatabaseCartStorageService;
+use App\Services\SessionCartStorageService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
-        //
+        $this->app->bind(CartStorageInterface::class, function ($app) {
+            if (Auth::check()) {
+                return $app->make(DatabaseCartStorageService::class);
+            }
+            return $app->make(SessionCartStorageService::class);
+        });
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
         //

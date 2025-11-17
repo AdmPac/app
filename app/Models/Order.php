@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
-use App\Models\Order\Status;
+use App\Models\Order\OrderStatus as Status;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Order extends Model
 {
@@ -24,22 +27,22 @@ class Order extends Model
         'status_id' => 'integer',
     ];
 
-    public function status()
+    public function status(): BelongsTo
     {
         return $this->belongsTo(Status::class);
     }
 
-    public function phone()
+    public function phone(): BelongsTo
     {
         return $this->belongsTo(Phone::class);
     }
 
-    public function address()
+    public function address(): BelongsTo
     {
         return $this->belongsTo(Address::class);
     }
 
-    public function product()
+    public function products(): BelongsToMany
     {
         return $this->belongsToMany(
             Product::class,
@@ -56,7 +59,7 @@ class Order extends Model
         );
     }
 
-    public function item()
+    public function items(): HasMany
     {
         return $this->hasMany(
             OrderItems::class,

@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Product as ProductModel;
-use App\Models\Product\Status as ProductStatus;
+use App\Models\Product\ProductStatus as ProductStatus;
 use Faker\Factory as Faker;
 
 class ProductSeeder extends Seeder
