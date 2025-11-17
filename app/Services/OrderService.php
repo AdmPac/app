@@ -2,12 +2,10 @@
 
 namespace App\Services;
 
-use App\Http\Requests\StatusPatchRequest;
 use App\Http\Resources\OrderResoource;
 use App\Models\Order;
 use App\Models\Order\Status;
 use App\Repository\CartRepository;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;

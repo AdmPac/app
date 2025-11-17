@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-
-use App\Services\OrderService;
+use App\Http\Requests\ProductPatchRequest;
+use App\Http\Requests\ProductPostRequest;
+use App\Http\Requests\ProductPutRequest;
 use App\Services\ProductService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 /**
@@ -30,9 +30,9 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function post(Request $request): JsonResponse
+    public function post(ProductPostRequest $request): JsonResponse
     {
-        $products = $this->service->post($request);
+        $products = $this->service->post($request->validated());
         if ($products) {
             return response()->json($products);
         }
@@ -59,9 +59,9 @@ class ProductController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function patch(Request $request, int $id)
+    public function patch(ProductPatchRequest $request, int $id)
     {
-        $update = $this->service->patch($request, $id);
+        $update = $this->service->patch($request->validated(), $id);
         if ($update) {
             return response()->json(['message' => 'Продукт успешно обновлен']);
         }
@@ -73,9 +73,9 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function put(Request $request, int $id)
+    public function put(ProductPutRequest $request, int $id)
     {
-        $update = $this->service->put($request, $id);
+        $update = $this->service->put($request->validated(), $id);
         if ($update) {
             return response()->json(['message' => 'Продукт успешно обновлен']);
         }
