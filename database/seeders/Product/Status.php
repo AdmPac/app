@@ -2,7 +2,7 @@
 
 namespace Database\Seeders\Product;
 
-use App\Models\Product\Status as ProductStatus;
+use App\Models\Product\ProductStatus as ProductStatus;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;

@@ -3,8 +3,8 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use App\Models\Product\Type;
-use App\Models\Product\Status;
+use App\Models\Product\ProductType as Type;
+use App\Models\Product\ProductStatus as Status;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Product>
  */

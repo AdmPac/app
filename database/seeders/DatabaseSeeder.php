@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Address;
 use App\Models\Order;
-use App\Models\Order\Status as OrderStatus;
+use App\Models\Order\OrderStatus as OrderStatus;
 use App\Models\OrderItems;
 use App\Models\Phone;
 use App\Models\User;

@@ -4,12 +4,12 @@ namespace Tests\Feature;
 
 use App\Models\Address;
 use App\Models\Order;
-use App\Models\Order\Status as OrderStatus;
+use App\Models\Order\OrderStatus as OrderStatus;
 use App\Models\OrderItems;
 use App\Models\Phone;
 use App\Models\Product;
-use App\Models\Product\Status;
-use App\Models\Product\Type;
+use App\Models\Product\ProductStatus as Status;
+use App\Models\Product\ProductType as Type;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\Feature\Traits\AuthTests;

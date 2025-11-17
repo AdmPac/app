@@ -3,8 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\Product;
-use App\Models\Product\Status;
-use App\Models\Product\Type;
+use App\Models\Product\ProductStatus as Status;
+use App\Models\Product\ProductType as Type;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\Feature\Traits\AuthTests;

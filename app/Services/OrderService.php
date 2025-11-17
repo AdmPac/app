@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Http\Resources\OrderResoource;
 use App\Models\Order;
-use App\Models\Order\Status;
+use App\Models\Order\OrderStatus as Status;
 use App\Repository\CartRepository;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\Auth;

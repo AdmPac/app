@@ -4,7 +4,7 @@ namespace App\Repository;
 
 use App\Models\Address;
 use App\Models\Order;
-use App\Models\Order\Status;
+use App\Models\Order\OrderStatus as Status;
 use App\Models\OrderItems;
 use App\Models\Phone;
 use App\Models\Product;
@@ -46,7 +46,7 @@ class CartRepository
     public function getProductCart(int $id): OrderItems
     {
         $order = $this->getCart();
-        $item = $order->item()->where('product_id', $id)->firstOrFail();
+        $item = $order->items()->where('product_id', $id)->firstOrFail();
         return $item;
     }
 
@@ -81,7 +81,7 @@ class CartRepository
                 $q->where('code', 1);
             })
             ->firstOrFail()
-            ->item()
+            ->items()
             ->where('product_id', $productId)
             ->firstOrFail();
         $updated = $order->update(['quantity' => $quantity]);

@@ -3,7 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use App\Models\Order\Status;
+use App\Models\Order\OrderStatus as Status;
 use Illuminate\Validation\Rule;
 
 class StatusPatchRequest extends FormRequest

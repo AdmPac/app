@@ -3,7 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Address;
-use App\Models\Order\Status;
+use App\Models\Order\OrderStatus as Status;
 use App\Models\Phone;
 use App\Models\User;
 

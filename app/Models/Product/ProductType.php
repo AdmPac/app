@@ -5,7 +5,7 @@ namespace App\Models\Product;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Product;
 
-class Type extends Model
+class ProductType extends Model
 {
     protected $table = "product_types";
     protected $fillable = [
@@ -17,3 +17,5 @@ class Type extends Model
         return $this->hasMany(Product::class);
     }
 }
+
+

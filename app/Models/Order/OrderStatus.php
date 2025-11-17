@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 use App\Models\Order;
 
-class Status extends Model
+class OrderStatus extends Model
 {
     protected $table = "status_orders";
 
@@ -17,3 +17,5 @@ class Status extends Model
         return $this->hasOne(Order::class);
     }
 }
+
+

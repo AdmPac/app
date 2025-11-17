@@ -5,7 +5,7 @@ namespace App\Models\Product;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Product;
 
-class Status extends Model
+class ProductStatus extends Model
 {
     protected $table = "product_statuses";
     protected $fillable = [
@@ -17,3 +17,5 @@ class Status extends Model
         return $this->hasMany(Product::class);
     }
 }
+
+

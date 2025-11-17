@@ -4,8 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Models\Product\Status;
-use App\Models\Product\Type;
+use App\Models\Product\ProductStatus as Status;
+use App\Models\Product\ProductType as Type;
 
 class Product extends Model
 {
