@@ -4,6 +4,7 @@ namespace App\Models\Product;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Product;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ProductStatus extends Model
 {
@@ -12,7 +13,7 @@ class ProductStatus extends Model
         'name',
         'code'
     ];
-    public function product()
+    public function product(): HasMany
     {
         return $this->hasMany(Product::class);
     }

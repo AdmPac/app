@@ -5,6 +5,7 @@ namespace App\Models\Order;
 use Illuminate\Database\Eloquent\Model;
 
 use App\Models\Order;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class OrderStatus extends Model
 {
@@ -12,7 +13,7 @@ class OrderStatus extends Model
 
     public $timestamps = false;
 
-    public function order()
+    public function order(): HasOne
     {
         return $this->hasOne(Order::class);
     }

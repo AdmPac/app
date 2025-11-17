@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AuthRegisterRequest;
 use App\Services\AuthService;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -13,7 +14,7 @@ class AuthController extends Controller
     {
     }
 
-    public function register(AuthRegisterRequest $request)
+    public function register(AuthRegisterRequest $request): JsonResponse
     {
         $validatedData = $request->validated();
         $user = $this->service->register($validatedData);
@@ -24,22 +25,22 @@ class AuthController extends Controller
         ], 201);
     }
 
-    public function login(Request $request)
+    public function login(Request $request): JsonResponse
     {
         $token = $this->service->login($request);
         return response()->json([
             'token' => $token,
-            'expires_in' => auth('api')->factory()->getTTL() * 60,
+            'expires_in' => JWTAuth::factory()->getTTL() * 60,
         ]);
     }
 
-    public function logout()
+    public function logout(): JsonResponse
     {
         $this->service->logout();
         return response()->json(['message' => 'Successfully logged out']);
     }
 
-    public function getUser()
+    public function getUser(): JsonResponse
     {
         $user = $this->service->getUser();
         if (!$user) {
@@ -48,7 +49,7 @@ class AuthController extends Controller
         return response()->json($user);
     }
 
-    public function updateUser(Request $request)
+    public function updateUser(Request $request): JsonResponse
     {
         $user = $this->service->updateUser($request);
         return response()->json($user);

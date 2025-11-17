@@ -17,7 +17,7 @@ class OrderService
         
     }
 
-    public function getByUserID(int $uid)
+    public function getByUserID(int $uid): ResourceCollection
     {
         $orders = Order::where('user_id', $uid)
             ->with(['phone', 'address', 'product'])

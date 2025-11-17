@@ -44,7 +44,7 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function get(int $id)
+    public function get(int $id): JsonResponse
     {
         $products = $this->service->get($id);
         return response()->json($products);
@@ -53,7 +53,7 @@ class ProductController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function patch(ProductPatchRequest $request, int $id)
+    public function patch(ProductPatchRequest $request, int $id): JsonResponse
     {
         $update = $this->service->patch($request->validated(), $id);
         if ($update) {
@@ -67,7 +67,7 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function put(ProductPutRequest $request, int $id)
+    public function put(ProductPutRequest $request, int $id): JsonResponse
     {
         $update = $this->service->put($request->validated(), $id);
         if ($update) {
@@ -81,7 +81,7 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function delete(int $id)
+    public function delete(int $id): JsonResponse
     {
         $isDeleted = $this->service->delete($id);
         if ($isDeleted) {
