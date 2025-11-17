@@ -46,14 +46,8 @@ class ProductController extends Controller
      */
     public function get(int $id)
     {
-        try {
-            $products = $this->service->get($id);
-            return response()->json($products);
-        } catch (ModelNotFoundException $e) {
-            return response()->json($e->getMessage(), 404);
-        } catch (\Exception $e) {
-            return response()->json($e->getMessage(), 500);
-        }
+        $products = $this->service->get($id);
+        return response()->json($products);
     }
 
     /**

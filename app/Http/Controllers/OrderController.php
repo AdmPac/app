@@ -27,20 +27,14 @@ class OrderController extends Controller
 
     public function patch(StatusPatchRequest $request, $id): JsonResponse
     {
-        try {
-            $update = $this->service->patch($request->validated(), $id);
-            if ($update) {
-                return response()->json([
-                    'message' => 'Заказ успешно обновлен',
-                ]);
-            }
+        $update = $this->service->patch($request->validated(), $id);
+        if ($update) {
             return response()->json([
-                'message' => 'Ошибка обновления',
-            ], 500);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage(),
-            ], 500);
+                'message' => 'Заказ успешно обновлен',
+            ]);
         }
+        return response()->json([
+            'message' => 'Ошибка обновления',
+        ], 500);
     }
 }
