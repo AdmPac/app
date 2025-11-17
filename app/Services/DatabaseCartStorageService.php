@@ -18,7 +18,7 @@ class DatabaseCartStorageService implements CartStorageInterface
         $productsModel = $this->repository->getUserCart();
         
         if ($productsModel) { 
-            $productsData = $productsModel->toArray()['product'];
+            $productsData = $productsModel->toArray()['products'];
             foreach ($productsData as $k => $product) {
                 $productsData[$k]['quantity'] = $product['pivot']['quantity'];
                 $productsData[$k]['order_id'] = $product['pivot']['order_id'];

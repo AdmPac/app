@@ -13,7 +13,7 @@ class OrderController extends Controller
     {
     }
     
-    public function getByUserID($uid): JsonResponse
+    public function getByUserID(int $uid): JsonResponse
     {
         $orderData = $this->service->getByUserID($uid);
         return response()->json($orderData);
@@ -25,7 +25,7 @@ class OrderController extends Controller
         return response()->json($orderData);
     }
 
-    public function patch(StatusPatchRequest $request, $id): JsonResponse
+    public function patch(StatusPatchRequest $request, int $id): JsonResponse
     {
         $update = $this->service->patch($request->validated(), $id);
         if ($update) {

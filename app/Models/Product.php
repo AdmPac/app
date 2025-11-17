@@ -28,7 +28,7 @@ class Product extends Model
         return $this->belongsTo(Type::class);
     }
 
-    public function order(): BelongsToMany
+    public function orders(): BelongsToMany
     {
         return $this->belongsToMany(Order::class, 'order_items', 'product_id', 'order_id');
     }

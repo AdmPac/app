@@ -15,7 +15,7 @@ class CartRepository
     const ACTIVE_STATUS_CODE = 1;
     public function getUserCart(): Order
     {
-        $productsModel = Order::with('product', 'status')
+        $productsModel = Order::with('products', 'status')
             ->where('user_id', Auth::id())
             ->whereHas('status', function ($q) {
                 $q->where('code', 1); // статус code=1 - текущая корзина
@@ -74,7 +74,7 @@ class CartRepository
         return $item;
     }
 
-    public function updateQuantityProductCart($productId, $quantity): bool
+    public function updateQuantityProductCart(int $productId, int $quantity): bool
     {
         $order = Order::where('user_id', Auth::id())
             ->whereHas('status', function ($q) {

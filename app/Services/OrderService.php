@@ -20,7 +20,7 @@ class OrderService
     public function getByUserID(int $uid): ResourceCollection
     {
         $orders = Order::where('user_id', $uid)
-            ->with(['phone', 'address', 'product'])
+            ->with(['phone', 'address', 'products'])
             ->get();
 
         return OrderResoource::collection($orders);
@@ -30,7 +30,7 @@ class OrderService
     {
         $isAdmin = Gate::allows('access-admin');
         $order = Order::query();
-        $order->with('phone', 'address', 'product');
+        $order->with('phone', 'address', 'products');
         $orders = $isAdmin ? $order->get() : $order->where('user_id', Auth::id())->get();
         return OrderResoource::collection($orders);
     }
